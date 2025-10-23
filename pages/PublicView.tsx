@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo } from 'react';
 import { Clinic, Doctor } from '../types';
 import { MapPinIcon, StethoscopeIcon, UserIcon, ChevronLeftIcon } from '../components/icons/Icons';
@@ -57,7 +56,18 @@ const PublicView: React.FC<PublicViewProps> = ({ clinics, doctors }) => {
       );
   }, [selectedClinic, doctors, searchQuery]);
 
-  const getDoctorCount = (clinicId: string) => doctors.filter(d => d.clinicId === clinicId).length;
+  const doctorCounts = useMemo(() => {
+    const counts = new Map<string, number>();
+    doctors.forEach(doctor => {
+        counts.set(doctor.clinicId, (counts.get(doctor.clinicId) || 0) + 1);
+    });
+    clinics.forEach(clinic => {
+        if (!counts.has(clinic.id)) {
+            counts.set(clinic.id, 0);
+        }
+    });
+    return counts;
+  }, [doctors, clinics]);
 
   if (selectedClinic) {
     return (
@@ -76,7 +86,7 @@ const PublicView: React.FC<PublicViewProps> = ({ clinics, doctors }) => {
             placeholder="Search doctors by name or specialty..."
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
-            className="w-full max-w-lg px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-DEFAULT focus:border-primary-DEFAULT dark:bg-surface-dark dark:border-gray-600 dark:text-text-dark"
+            className="w-full max-w-lg px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-DEFAULT focus:border-primary-DEFAULT bg-surface-light text-text-light dark:bg-surface-dark dark:border-gray-600 dark:text-text-dark"
           />
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -95,7 +105,7 @@ const PublicView: React.FC<PublicViewProps> = ({ clinics, doctors }) => {
       <h1 className="text-4xl font-extrabold text-center mb-10 text-primary-dark dark:text-primary-light">Our Clinics</h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
         {clinics.map(clinic => (
-          <ClinicCard key={clinic.id} clinic={clinic} onSelect={() => setSelectedClinic(clinic)} doctorCount={getDoctorCount(clinic.id)} />
+          <ClinicCard key={clinic.id} clinic={clinic} onSelect={() => setSelectedClinic(clinic)} doctorCount={doctorCounts.get(clinic.id) || 0} />
         ))}
       </div>
     </div>

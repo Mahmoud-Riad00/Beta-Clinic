@@ -1,5 +1,4 @@
-
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Doctor, Clinic } from '../../types';
 import { PencilIcon, TrashIcon, XMarkIcon, PlusIcon } from '../../components/icons/Icons';
 
@@ -16,15 +15,20 @@ const emptyDoctor: Omit<Doctor, 'id'> = { name: '', specialty: '', available: tr
 const DoctorsManagement: React.FC<DoctorsManagementProps> = ({ doctors, clinics, addDoctor, updateDoctor, deleteDoctor }) => {
   const [formData, setFormData] = useState(emptyDoctor);
   const [editingDoctor, setEditingDoctor] = useState<Doctor | null>(null);
+  const noClinics = clinics.length === 0;
+
+  const clinicMap = useMemo(() => {
+    return new Map(clinics.map(clinic => [clinic.id, clinic.name]));
+  }, [clinics]);
 
   useEffect(() => {
     if (editingDoctor) {
       setFormData(editingDoctor);
     } else {
         // Ensure clinicId is set to the first clinic if available, otherwise empty
-        setFormData({ ...emptyDoctor, clinicId: clinics.length > 0 ? clinics[0].id : '' });
+        setFormData({ ...emptyDoctor, clinicId: noClinics ? '' : clinics[0].id });
     }
-  }, [editingDoctor, clinics]);
+  }, [editingDoctor, clinics, noClinics]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -38,8 +42,8 @@ const DoctorsManagement: React.FC<DoctorsManagementProps> = ({ doctors, clinics,
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if(!formData.clinicId && clinics.length > 0){
-        alert("Please select a clinic.");
+    if(noClinics){
+        alert("You must create a clinic before adding a doctor.");
         return;
     }
     if (editingDoctor) {
@@ -48,7 +52,7 @@ const DoctorsManagement: React.FC<DoctorsManagementProps> = ({ doctors, clinics,
       addDoctor(formData);
     }
     setEditingDoctor(null);
-    setFormData({ ...emptyDoctor, clinicId: clinics.length > 0 ? clinics[0].id : '' });
+    setFormData({ ...emptyDoctor, clinicId: noClinics ? '' : clinics[0].id });
   };
 
   const handleEdit = (doctor: Doctor) => {
@@ -57,7 +61,7 @@ const DoctorsManagement: React.FC<DoctorsManagementProps> = ({ doctors, clinics,
   
   const cancelEdit = () => {
     setEditingDoctor(null);
-    setFormData({ ...emptyDoctor, clinicId: clinics.length > 0 ? clinics[0].id : '' });
+    setFormData({ ...emptyDoctor, clinicId: noClinics ? '' : clinics[0].id });
   }
 
   return (
@@ -65,28 +69,34 @@ const DoctorsManagement: React.FC<DoctorsManagementProps> = ({ doctors, clinics,
       <div className="lg:col-span-1">
         <div className="p-6 bg-surface-light dark:bg-surface-dark rounded-xl shadow-lg">
           <h3 className="text-xl font-bold mb-4 text-primary-dark dark:text-primary-light">{editingDoctor ? 'Edit Doctor' : 'Add New Doctor'}</h3>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <input name="name" value={formData.name} onChange={handleInputChange} placeholder="Name" required className="w-full p-2 border rounded dark:bg-background-dark dark:border-gray-600"/>
-            <input name="specialty" value={formData.specialty} onChange={handleInputChange} placeholder="Specialty" required className="w-full p-2 border rounded dark:bg-background-dark dark:border-gray-600"/>
-            <select name="clinicId" value={formData.clinicId} onChange={handleInputChange} required className="w-full p-2 border rounded dark:bg-background-dark dark:border-gray-600">
-              <option value="" disabled>Select Clinic</option>
-              {clinics.map(clinic => <option key={clinic.id} value={clinic.id}>{clinic.name}</option>)}
-            </select>
-            <div className="flex items-center">
-              <input type="checkbox" id="available" name="available" checked={formData.available} onChange={handleCheckboxChange} className="h-4 w-4 text-primary-DEFAULT border-gray-300 rounded focus:ring-primary-DEFAULT"/>
-              <label htmlFor="available" className="ml-2 block text-sm text-gray-900 dark:text-gray-300">Available</label>
-            </div>
-             <div className="flex space-x-2">
-                <button type="submit" className="flex-1 flex items-center justify-center py-2 px-4 text-white bg-primary-DEFAULT hover:bg-primary-dark rounded-md transition-colors">
-                    {editingDoctor ? 'Update' : <><PlusIcon className="h-5 w-5 mr-1" /> Add</>}
-                </button>
-                {editingDoctor && (
-                    <button type="button" onClick={cancelEdit} className="flex-1 py-2 px-4 text-white bg-secondary hover:bg-gray-600 rounded-md transition-colors flex items-center justify-center">
-                        <XMarkIcon className="h-5 w-5 mr-1" /> Cancel
-                    </button>
-                )}
-            </div>
-          </form>
+            {noClinics ? (
+                 <div className="text-center text-secondary dark:text-gray-400 p-4 border-2 border-dashed rounded-lg">
+                    <p>You must create a clinic before you can add a doctor.</p>
+                </div>
+            ) : (
+                <form onSubmit={handleSubmit} className="space-y-4">
+                    <input name="name" value={formData.name} onChange={handleInputChange} placeholder="Name" required className="w-full p-2 border rounded bg-background-light text-text-light dark:bg-background-dark dark:border-gray-600 dark:text-text-dark"/>
+                    <input name="specialty" value={formData.specialty} onChange={handleInputChange} placeholder="Specialty" required className="w-full p-2 border rounded bg-background-light text-text-light dark:bg-background-dark dark:border-gray-600 dark:text-text-dark"/>
+                    <select name="clinicId" value={formData.clinicId} onChange={handleInputChange} required className="w-full p-2 border rounded bg-background-light text-text-light dark:bg-background-dark dark:border-gray-600 dark:text-text-dark">
+                    <option value="" disabled>Select Clinic</option>
+                    {clinics.map(clinic => <option key={clinic.id} value={clinic.id}>{clinic.name}</option>)}
+                    </select>
+                    <div className="flex items-center">
+                    <input type="checkbox" id="available" name="available" checked={formData.available} onChange={handleCheckboxChange} className="h-4 w-4 text-primary-DEFAULT border-gray-300 rounded focus:ring-primary-DEFAULT"/>
+                    <label htmlFor="available" className="ml-2 block text-sm text-gray-900 dark:text-gray-300">Available</label>
+                    </div>
+                    <div className="flex space-x-2">
+                        <button type="submit" className="flex-1 flex items-center justify-center py-2 px-4 text-white bg-primary-DEFAULT hover:bg-primary-dark rounded-md transition-colors">
+                            {editingDoctor ? 'Update' : <><PlusIcon className="h-5 w-5 mr-1" /> Add</>}
+                        </button>
+                        {editingDoctor && (
+                            <button type="button" onClick={cancelEdit} className="flex-1 py-2 px-4 text-white bg-secondary hover:bg-gray-600 rounded-md transition-colors flex items-center justify-center">
+                                <XMarkIcon className="h-5 w-5 mr-1" /> Cancel
+                            </button>
+                        )}
+                    </div>
+                </form>
+            )}
         </div>
       </div>
       <div className="lg:col-span-2">
@@ -106,7 +116,7 @@ const DoctorsManagement: React.FC<DoctorsManagementProps> = ({ doctors, clinics,
                 <tr key={doctor.id} className="bg-white border-b dark:bg-surface-dark dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                   <td className="px-6 py-4 font-medium text-gray-900 dark:text-white whitespace-nowrap">{doctor.name}</td>
                   <td className="px-6 py-4">{doctor.specialty}</td>
-                  <td className="px-6 py-4">{clinics.find(c => c.id === doctor.clinicId)?.name || 'N/A'}</td>
+                  <td className="px-6 py-4">{clinicMap.get(doctor.clinicId) || 'N/A'}</td>
                   <td className="px-6 py-4">
                     <span className={`px-2 py-1 text-xs font-medium rounded-full ${doctor.available ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300' : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300'}`}>
                       {doctor.available ? 'Available' : 'Unavailable'}

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Clinic } from '../../types';
 import { PencilIcon, TrashIcon, XMarkIcon, PlusIcon } from '../../components/icons/Icons';
@@ -55,10 +54,10 @@ const ClinicsManagement: React.FC<ClinicsManagementProps> = ({ clinics, addClini
         <div className="p-6 bg-surface-light dark:bg-surface-dark rounded-xl shadow-lg">
           <h3 className="text-xl font-bold mb-4 text-primary-dark dark:text-primary-light">{editingClinic ? 'Edit Clinic' : 'Add New Clinic'}</h3>
           <form onSubmit={handleSubmit} className="space-y-4">
-            <input name="name" value={formData.name} onChange={handleInputChange} placeholder="Name" required className="w-full p-2 border rounded dark:bg-background-dark dark:border-gray-600"/>
-            <input name="address" value={formData.address} onChange={handleInputChange} placeholder="Address" required className="w-full p-2 border rounded dark:bg-background-dark dark:border-gray-600"/>
-            <input name="specialty" value={formData.specialty} onChange={handleInputChange} placeholder="Specialty" required className="w-full p-2 border rounded dark:bg-background-dark dark:border-gray-600"/>
-            <input name="imageURL" value={formData.imageURL} onChange={handleInputChange} placeholder="Image URL" required className="w-full p-2 border rounded dark:bg-background-dark dark:border-gray-600"/>
+            <input name="name" value={formData.name} onChange={handleInputChange} placeholder="Name" required className="w-full p-2 border rounded bg-background-light text-text-light dark:bg-background-dark dark:border-gray-600 dark:text-text-dark"/>
+            <input name="address" value={formData.address} onChange={handleInputChange} placeholder="Address" required className="w-full p-2 border rounded bg-background-light text-text-light dark:bg-background-dark dark:border-gray-600 dark:text-text-dark"/>
+            <input name="specialty" value={formData.specialty} onChange={handleInputChange} placeholder="Specialty" required className="w-full p-2 border rounded bg-background-light text-text-light dark:bg-background-dark dark:border-gray-600 dark:text-text-dark"/>
+            <input name="imageURL" value={formData.imageURL} onChange={handleInputChange} placeholder="Image URL" required className="w-full p-2 border rounded bg-background-light text-text-light dark:bg-background-dark dark:border-gray-600 dark:text-text-dark"/>
             <div className="flex space-x-2">
                 <button type="submit" className="flex-1 flex items-center justify-center py-2 px-4 text-white bg-primary-DEFAULT hover:bg-primary-dark rounded-md transition-colors">
                     {editingClinic ? 'Update' : <><PlusIcon className="h-5 w-5 mr-1" /> Add</>}

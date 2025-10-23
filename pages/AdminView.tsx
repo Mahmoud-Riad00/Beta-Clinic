@@ -1,8 +1,10 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Clinic, Doctor } from '../types';
 import LoginForm from './admin/LoginForm';
 import AdminDashboard from './admin/AdminDashboard';
+import { auth } from '../firebase/firebase';
+import { onAuthStateChanged, signOut, User } from 'firebase/auth';
+
 
 interface AdminViewProps {
   clinics: Clinic[];
@@ -13,26 +15,54 @@ interface AdminViewProps {
   addDoctor: (doctor: Omit<Doctor, 'id'>) => void;
   updateDoctor: (doctor: Doctor) => void;
   deleteDoctor: (doctorId: string) => void;
+  theme: 'light' | 'dark';
+  onToggleTheme: () => void;
 }
 
-const AdminView: React.FC<AdminViewProps> = (props) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+const AdminView: React.FC<AdminViewProps> = ({ theme, onToggleTheme, ...props }) => {
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  const handleLogin = (success: boolean) => {
-    if (success) {
-      setIsAuthenticated(true);
+  useEffect(() => {
+    if (!auth) {
+        setLoading(false);
+        return;
     }
-  };
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+      setLoading(false);
+    });
+    return () => unsubscribe();
+  }, []);
   
   const handleLogout = () => {
-      setIsAuthenticated(false);
+    if (auth) {
+        signOut(auth);
+    }
+  };
+
+  let content;
+  if (loading) {
+    content = (
+        <div className="flex items-center justify-center min-h-screen">
+            <div className="flex items-center space-x-2">
+                <div className="w-4 h-4 rounded-full animate-pulse bg-primary-DEFAULT"></div>
+                <span>Checking login status...</span>
+            </div>
+        </div>
+    );
+  } else if (!user) {
+    content = <LoginForm />;
+  } else {
+    content = <AdminDashboard {...props} onLogout={handleLogout} theme={theme} onToggleTheme={onToggleTheme} />;
   }
 
-  if (!isAuthenticated) {
-    return <LoginForm onLogin={handleLogin} />;
-  }
 
-  return <AdminDashboard {...props} onLogout={handleLogout}/>;
+  return (
+    <div className="min-h-screen font-sans text-text-light dark:text-text-dark bg-background-light dark:bg-background-dark transition-colors duration-300">
+        {content}
+    </div>
+  );
 };
 
 export default AdminView;
