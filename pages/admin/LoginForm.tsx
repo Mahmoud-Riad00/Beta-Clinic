@@ -27,6 +27,7 @@ const LoginForm: React.FC = () => {
         setError('Invalid email or password.');
       } else {
         setError('An unexpected error occurred. Please try again.');
+        console.error(err);
       }
     } finally {
         setLoading(false);
@@ -34,34 +35,59 @@ const LoginForm: React.FC = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen px-4">
+    <div className="flex items-center justify-center min-h-[calc(100vh-12rem)]">
       <div className="w-full max-w-md p-8 space-y-6 bg-surface-light dark:bg-surface-dark rounded-xl shadow-lg">
-        <h2 className="text-2xl font-bold text-center text-primary-dark dark:text-primary-light">Admin Login</h2>
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="Email"
-            required
-            className="w-full px-4 py-2 text-text-light bg-background-light border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-DEFAULT dark:bg-background-dark dark:text-text-dark dark:border-gray-600"
-          />
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Password"
-            required
-            className="w-full px-4 py-2 text-text-light bg-background-light border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-DEFAULT dark:bg-background-dark dark:text-text-dark dark:border-gray-600"
-          />
-          {error && <p className="text-sm text-red-500 text-center">{error}</p>}
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full py-2 px-4 font-semibold text-white bg-primary-DEFAULT rounded-md hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-DEFAULT disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {loading ? 'Logging in...' : 'Login'}
-          </button>
+        <h2 className="text-3xl font-bold text-center text-primary-dark dark:text-primary-light">
+          Admin Login
+        </h2>
+        <form className="space-y-6" onSubmit={handleSubmit}>
+          <div>
+            <label htmlFor="email" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+              Email address
+            </label>
+            <input
+              id="email"
+              name="email"
+              type="email"
+              autoComplete="email"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-DEFAULT focus:border-primary-DEFAULT sm:text-sm bg-background-light text-text-light dark:bg-background-dark dark:border-gray-600 dark:text-text-dark"
+              placeholder="admin@example.com"
+              disabled={loading}
+            />
+          </div>
+          <div>
+            <label
+              htmlFor="password"
+              className="text-sm font-medium text-gray-700 dark:text-gray-300"
+            >
+              Password
+            </label>
+            <input
+              id="password"
+              name="password"
+              type="password"
+              autoComplete="current-password"
+              required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-DEFAULT focus:border-primary-DEFAULT sm:text-sm bg-background-light text-text-light dark:bg-background-dark dark:border-gray-600 dark:text-text-dark"
+              placeholder="password"
+              disabled={loading}
+            />
+          </div>
+          {error && <p className="text-sm text-red-600 text-center">{error}</p>}
+          <div>
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-DEFAULT hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-dark transition-colors disabled:bg-gray-400"
+            >
+              {loading ? 'Signing in...' : 'Sign in'}
+            </button>
+          </div>
         </form>
       </div>
     </div>

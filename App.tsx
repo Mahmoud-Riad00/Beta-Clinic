@@ -5,7 +5,10 @@ import PublicView from './pages/PublicView';
 import AdminView from './pages/AdminView';
 import Header from './components/Header';
 
+export type View = 'public' | 'admin';
+
 const App: React.FC = () => {
+  const [view, setView] = useState<View>('public');
   const [theme, setTheme] = useState<'light' | 'dark'>(localStorage.getItem('theme') as 'light' | 'dark' || 'light');
   const data = useFirebaseData();
 
@@ -55,21 +58,32 @@ const App: React.FC = () => {
       );
   }
 
-  const isAdminRoute = window.location.pathname.startsWith('/admin');
-
-  if (isAdminRoute) {
-    return <AdminView {...data} theme={theme} onToggleTheme={toggleTheme} />;
-  }
-  
   return (
-    <div className="min-h-screen font-sans text-text-light dark:text-text-dark bg-background-light dark:bg-background-dark transition-colors duration-300">
+    <div className="min-h-screen font-sans text-text-light dark:text-text-dark bg-background-light dark:bg-background-dark transition-colors duration-300 flex flex-col">
       <Header
+        currentView={view}
+        onNavigate={setView}
         theme={theme}
         onToggleTheme={toggleTheme}
       />
-      <main className="p-4 md:p-8">
-        <PublicView clinics={data.clinics} doctors={data.doctors} />
+      <main className="p-4 md:p-8 flex-grow">
+        {view === 'public' ? (
+          <PublicView clinics={data.clinics} doctors={data.doctors} />
+        ) : (
+          <AdminView {...data} />
+        )}
       </main>
+      <footer className="bg-surface-light dark:bg-surface-dark mt-auto py-6 border-t border-gray-200 dark:border-gray-700">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center text-secondary dark:text-gray-400">
+            <p>&copy; {new Date().getFullYear()} ClinicSys. All rights reserved.</p>
+            <button
+              onClick={() => setView('admin')}
+              className="mt-2 text-sm text-primary-DEFAULT hover:text-primary-dark dark:hover:text-primary-light underline"
+            >
+              Admin Panel
+            </button>
+          </div>
+      </footer>
     </div>
   );
 };
