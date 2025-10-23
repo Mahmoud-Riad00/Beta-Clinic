@@ -1,0 +1,5 @@
+{
+  "name": " Clinic & Doctor Management System",
+  "description": "A comprehensive web application for managing medical clinics and doctors. It features a public directory of clinics and doctors, and a secure admin panel for CRUD operations on the data.",
+  "requestFramePermissions": []
+}
