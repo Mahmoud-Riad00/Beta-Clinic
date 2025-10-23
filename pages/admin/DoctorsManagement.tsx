@@ -10,7 +10,7 @@ interface DoctorsManagementProps {
   deleteDoctor: (doctorId: string) => void;
 }
 
-const emptyDoctor: Omit<Doctor, 'id'> = { name: '', specialty: '', available: true, clinicId: '' };
+const emptyDoctor: Omit<Doctor, 'id'> = { name: '', specialty: '', available: true, clinicId: '', photoURL: '' };
 
 const DoctorsManagement: React.FC<DoctorsManagementProps> = ({ doctors, clinics, addDoctor, updateDoctor, deleteDoctor }) => {
   const [formData, setFormData] = useState(emptyDoctor);
@@ -77,6 +77,7 @@ const DoctorsManagement: React.FC<DoctorsManagementProps> = ({ doctors, clinics,
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <input name="name" value={formData.name} onChange={handleInputChange} placeholder="Name" required className="w-full p-2 border rounded bg-background-light text-text-light dark:bg-background-dark dark:border-gray-600 dark:text-text-dark"/>
                     <input name="specialty" value={formData.specialty} onChange={handleInputChange} placeholder="Specialty" required className="w-full p-2 border rounded bg-background-light text-text-light dark:bg-background-dark dark:border-gray-600 dark:text-text-dark"/>
+                    <input name="photoURL" value={formData.photoURL} onChange={handleInputChange} placeholder="Photo URL" required className="w-full p-2 border rounded bg-background-light text-text-light dark:bg-background-dark dark:border-gray-600 dark:text-text-dark"/>
                     <select name="clinicId" value={formData.clinicId} onChange={handleInputChange} required className="w-full p-2 border rounded bg-background-light text-text-light dark:bg-background-dark dark:border-gray-600 dark:text-text-dark">
                     <option value="" disabled>Select Clinic</option>
                     {clinics.map(clinic => <option key={clinic.id} value={clinic.id}>{clinic.name}</option>)}
@@ -86,11 +87,11 @@ const DoctorsManagement: React.FC<DoctorsManagementProps> = ({ doctors, clinics,
                     <label htmlFor="available" className="ml-2 block text-sm text-gray-900 dark:text-gray-300">Available</label>
                     </div>
                     <div className="flex space-x-2">
-                        <button type="submit" className="flex-1 flex items-center justify-center py-2 px-4 text-white bg-primary-DEFAULT hover:bg-primary-dark rounded-md transition-colors">
+                        <button type="submit" className="flex-1 flex items-center justify-center py-2 px-4 text-primary-light bg-primary-dark hover:bg-sky-900 rounded-md transition-colors">
                             {editingDoctor ? 'Update' : <><PlusIcon className="h-5 w-5 mr-1" /> Add</>}
                         </button>
                         {editingDoctor && (
-                            <button type="button" onClick={cancelEdit} className="flex-1 py-2 px-4 text-white bg-secondary hover:bg-gray-600 rounded-md transition-colors flex items-center justify-center">
+                            <button type="button" onClick={cancelEdit} className="flex-1 py-2 px-4 text-slate-100 bg-slate-500 hover:bg-slate-600 rounded-md transition-colors flex items-center justify-center">
                                 <XMarkIcon className="h-5 w-5 mr-1" /> Cancel
                             </button>
                         )}
@@ -104,6 +105,7 @@ const DoctorsManagement: React.FC<DoctorsManagementProps> = ({ doctors, clinics,
           <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
              <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
               <tr>
+                <th scope="col" className="px-6 py-3">Photo</th>
                 <th scope="col" className="px-6 py-3">Name</th>
                 <th scope="col" className="px-6 py-3">Specialty</th>
                 <th scope="col" className="px-6 py-3">Clinic</th>
@@ -114,6 +116,9 @@ const DoctorsManagement: React.FC<DoctorsManagementProps> = ({ doctors, clinics,
             <tbody>
               {doctors.map(doctor => (
                 <tr key={doctor.id} className="bg-white border-b dark:bg-surface-dark dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                  <td className="px-6 py-4">
+                    <img src={doctor.photoURL} alt={doctor.name} className="h-10 w-10 rounded-full object-cover"/>
+                  </td>
                   <td className="px-6 py-4 font-medium text-gray-900 dark:text-white whitespace-nowrap">{doctor.name}</td>
                   <td className="px-6 py-4">{doctor.specialty}</td>
                   <td className="px-6 py-4">{clinicMap.get(doctor.clinicId) || 'N/A'}</td>
@@ -123,8 +128,8 @@ const DoctorsManagement: React.FC<DoctorsManagementProps> = ({ doctors, clinics,
                     </span>
                   </td>
                   <td className="px-6 py-4 flex space-x-2">
-                    <button onClick={() => handleEdit(doctor)} className="p-2 text-blue-600 hover:text-blue-800"><PencilIcon className="h-5 w-5"/></button>
-                    <button onClick={() => deleteDoctor(doctor.id)} className="p-2 text-red-600 hover:text-red-800"><TrashIcon className="h-5 w-5"/></button>
+                    <button onClick={() => handleEdit(doctor)} className="p-2 text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300"><PencilIcon className="h-5 w-5"/></button>
+                    <button onClick={() => deleteDoctor(doctor.id)} className="p-2 text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300"><TrashIcon className="h-5 w-5"/></button>
                   </td>
                 </tr>
               ))}

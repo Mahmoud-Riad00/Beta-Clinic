@@ -9,7 +9,7 @@ interface ClinicsManagementProps {
   deleteClinic: (clinicId: string) => void;
 }
 
-const emptyClinic: Omit<Clinic, 'id'> = { name: '', address: '', specialty: '', imageURL: '' };
+const emptyClinic: Omit<Clinic, 'id'> = { name: '', specialty: '', imageURL: '' };
 
 const ClinicsManagement: React.FC<ClinicsManagementProps> = ({ clinics, addClinic, updateClinic, deleteClinic }) => {
   const [formData, setFormData] = useState(emptyClinic);
@@ -55,15 +55,14 @@ const ClinicsManagement: React.FC<ClinicsManagementProps> = ({ clinics, addClini
           <h3 className="text-xl font-bold mb-4 text-primary-dark dark:text-primary-light">{editingClinic ? 'Edit Clinic' : 'Add New Clinic'}</h3>
           <form onSubmit={handleSubmit} className="space-y-4">
             <input name="name" value={formData.name} onChange={handleInputChange} placeholder="Name" required className="w-full p-2 border rounded bg-background-light text-text-light dark:bg-background-dark dark:border-gray-600 dark:text-text-dark"/>
-            <input name="address" value={formData.address} onChange={handleInputChange} placeholder="Address" required className="w-full p-2 border rounded bg-background-light text-text-light dark:bg-background-dark dark:border-gray-600 dark:text-text-dark"/>
             <input name="specialty" value={formData.specialty} onChange={handleInputChange} placeholder="Specialty" required className="w-full p-2 border rounded bg-background-light text-text-light dark:bg-background-dark dark:border-gray-600 dark:text-text-dark"/>
             <input name="imageURL" value={formData.imageURL} onChange={handleInputChange} placeholder="Image URL" required className="w-full p-2 border rounded bg-background-light text-text-light dark:bg-background-dark dark:border-gray-600 dark:text-text-dark"/>
             <div className="flex space-x-2">
-                <button type="submit" className="flex-1 flex items-center justify-center py-2 px-4 text-white bg-primary-DEFAULT hover:bg-primary-dark rounded-md transition-colors">
+                <button type="submit" className="flex-1 flex items-center justify-center py-2 px-4 text-primary-light bg-primary-dark hover:bg-sky-900 rounded-md transition-colors">
                     {editingClinic ? 'Update' : <><PlusIcon className="h-5 w-5 mr-1" /> Add</>}
                 </button>
                 {editingClinic && (
-                    <button type="button" onClick={cancelEdit} className="flex-1 py-2 px-4 text-white bg-secondary hover:bg-gray-600 rounded-md transition-colors flex items-center justify-center">
+                    <button type="button" onClick={cancelEdit} className="flex-1 py-2 px-4 text-slate-100 bg-slate-500 hover:bg-slate-600 rounded-md transition-colors flex items-center justify-center">
                         <XMarkIcon className="h-5 w-5 mr-1" /> Cancel
                     </button>
                 )}
@@ -87,8 +86,8 @@ const ClinicsManagement: React.FC<ClinicsManagementProps> = ({ clinics, addClini
                   <td className="px-6 py-4 font-medium text-gray-900 dark:text-white whitespace-nowrap">{clinic.name}</td>
                   <td className="px-6 py-4">{clinic.specialty}</td>
                   <td className="px-6 py-4 flex space-x-2">
-                    <button onClick={() => handleEdit(clinic)} className="p-2 text-blue-600 hover:text-blue-800"><PencilIcon className="h-5 w-5"/></button>
-                    <button onClick={() => deleteClinic(clinic.id)} className="p-2 text-red-600 hover:text-red-800"><TrashIcon className="h-5 w-5"/></button>
+                    <button onClick={() => handleEdit(clinic)} className="p-2 text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300"><PencilIcon className="h-5 w-5"/></button>
+                    <button onClick={() => deleteClinic(clinic.id)} className="p-2 text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300"><TrashIcon className="h-5 w-5"/></button>
                   </td>
                 </tr>
               ))}

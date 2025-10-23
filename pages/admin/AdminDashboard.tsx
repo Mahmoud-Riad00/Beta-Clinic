@@ -34,7 +34,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
     <div className="container mx-auto">
         <div className="flex justify-between items-center mb-6">
              <h1 className="text-3xl font-bold text-primary-dark dark:text-primary-light">Admin Dashboard</h1>
-            <button onClick={props.onLogout} className="px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-md shadow-sm">
+            <button onClick={props.onLogout} className="px-4 py-2 text-sm font-medium text-red-100 bg-red-700 hover:bg-red-800 rounded-md shadow-sm">
                 Logout
             </button>
         </div>

@@ -2,7 +2,6 @@
 export interface Clinic {
   id: string;
   name: string;
-  address: string;
   specialty: string;
   imageURL: string;
 }
@@ -13,4 +12,5 @@ export interface Doctor {
   specialty: string;
   available: boolean;
   clinicId: string;
+  photoURL: string;
 }

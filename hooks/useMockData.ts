@@ -1,41 +1,57 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { Clinic, Doctor } from '../types';
 
 const initialClinics: Clinic[] = [
   {
     id: 'c1',
     name: 'Wellness Center',
-    address: '123 Health St, Medville',
     specialty: 'General Medicine',
-    imageURL: 'https://placehold.co/600x400/e0f2fe/0369a1?text=Wellness+Center',
+    imageURL: 'https://picsum.photos/seed/wellness/600/400',
   },
   {
     id: 'c2',
     name: 'City Heart Clinic',
-    address: '456 Pulse Ave, Cardio City',
     specialty: 'Cardiology',
-    imageURL: 'https://placehold.co/600x400/e0f2fe/0369a1?text=Heart+Clinic',
+    imageURL: 'https://picsum.photos/seed/heart/600/400',
   },
   {
     id: 'c3',
     name: 'Dental Care Associates',
-    address: '789 Smile Rd, Toothville',
     specialty: 'Dentistry',
-    imageURL: 'https://placehold.co/600x400/e0f2fe/0369a1?text=Dental+Care',
+    imageURL: 'https://picsum.photos/seed/dental/600/400',
+  },
+  {
+    id: 'c4',
+    name: 'OrthoPro Clinic',
+    specialty: 'Orthopedics',
+    imageURL: 'https://picsum.photos/seed/ortho/600/400',
   },
 ];
 
 const initialDoctors: Doctor[] = [
-  { id: 'd1', name: 'Dr. Alice Johnson', specialty: 'General Practitioner', available: true, clinicId: 'c1' },
-  { id: 'd2', name: 'Dr. Bob Williams', specialty: 'Cardiologist', available: true, clinicId: 'c2' },
-  { id: 'd3', name: 'Dr. Carol White', specialty: 'Dentist', available: false, clinicId: 'c3' },
-  { id: 'd4', name: 'Dr. David Green', specialty: 'General Practitioner', available: true, clinicId: 'c1' },
-  { id: 'd5', name: 'Dr. Eve Black', specialty: 'Cardiologist', available: false, clinicId: 'c2' },
+  { id: 'd1', name: 'Dr. Alice Johnson', specialty: 'General Practitioner', available: true, clinicId: 'c1', photoURL: 'https://picsum.photos/seed/alice/100/100' },
+  { id: 'd2', name: 'Dr. Bob Williams', specialty: 'Cardiologist', available: true, clinicId: 'c2', photoURL: 'https://picsum.photos/seed/bob/100/100' },
+  { id: 'd3', name: 'Dr. Carol White', specialty: 'Dentist', available: false, clinicId: 'c3', photoURL: 'https://picsum.photos/seed/carol/100/100' },
+  { id: 'd4', name: 'Dr. David Green', specialty: 'General Practitioner', available: true, clinicId: 'c1', photoURL: 'https://picsum.photos/seed/david/100/100' },
+  { id: 'd5', name: 'Dr. Eve Black', specialty: 'Cardiologist', available: false, clinicId: 'c2', photoURL: 'https://picsum.photos/seed/eve/100/100' },
+  { id: 'd6', name: 'Dr. Frank Castle', specialty: 'Orthopedist', available: true, clinicId: 'c4', photoURL: 'https://picsum.photos/seed/frank/100/100' },
 ];
 
 export const useMockData = () => {
-    const [clinics, setClinics] = useState<Clinic[]>(initialClinics);
-    const [doctors, setDoctors] = useState<Doctor[]>(initialDoctors);
+    const [clinics, setClinics] = useState<Clinic[]>([]);
+    const [doctors, setDoctors] = useState<Doctor[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setClinics(initialClinics);
+            setDoctors(initialDoctors);
+            setLoading(false);
+        }, 1500);
+
+        return () => clearTimeout(timer);
+    }, []);
+
 
     const addClinic = useCallback((clinic: Omit<Clinic, 'id'>) => {
         const newClinic = { ...clinic, id: `c${Date.now()}` };
@@ -74,6 +90,6 @@ export const useMockData = () => {
         addDoctor,
         updateDoctor,
         deleteDoctor,
-        loading: false // Mock data is loaded instantly
+        loading
     };
 };

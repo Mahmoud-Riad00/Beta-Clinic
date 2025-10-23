@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Clinic, Doctor } from '../types';
-import LoginForm from './admin/LoginForm';
+import { Clinic, Doctor } from '../../types';
 import AdminDashboard from './admin/AdminDashboard';
-import { auth } from '../firebase/firebase';
+import LoginForm from './admin/LoginForm';
+import { auth, isConfigured } from '../../firebase/firebase';
 import { onAuthStateChanged, signOut, User } from 'firebase/auth';
-
 
 interface AdminViewProps {
   clinics: Clinic[];
@@ -23,8 +22,8 @@ const AdminView: React.FC<AdminViewProps> = (props) => {
 
   useEffect(() => {
     if (!auth) {
-        setLoading(false);
-        return;
+      setLoading(false);
+      return;
     }
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
@@ -32,21 +31,32 @@ const AdminView: React.FC<AdminViewProps> = (props) => {
     });
     return () => unsubscribe();
   }, []);
-  
-  const handleLogout = () => {
+
+  const handleLogout = async () => {
     if (auth) {
-        signOut(auth);
+        try {
+            await signOut(auth);
+        } catch (error) {
+            console.error("Error signing out: ", error);
+            alert("An error occurred during logout. Please try again.");
+        }
     }
   };
+  
+  // This is a fallback for when Firebase isn't configured,
+  // to keep the admin panel accessible with mock data for review purposes.
+  if (!isConfigured) {
+      const handleMockLogout = () => {
+        alert('Logout functionality is disabled because Firebase is not configured. Please check your firebase/config.ts file.');
+      };
+      return <AdminDashboard {...props} onLogout={handleMockLogout} />;
+  }
 
   if (loading) {
     return (
-        <div className="flex items-center justify-center min-h-[calc(100vh-12rem)]">
-            <div className="flex items-center space-x-2">
-                <div className="w-4 h-4 rounded-full animate-pulse bg-primary-DEFAULT"></div>
-                <span>Checking login status...</span>
-            </div>
-        </div>
+      <div className="flex justify-center items-center min-h-[calc(100vh-12rem)]">
+        <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-primary-DEFAULT"></div>
+      </div>
     );
   }
 
