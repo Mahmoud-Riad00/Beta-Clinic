@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Clinic, Doctor } from '../types';
 import AdminDashboard from './admin/AdminDashboard';
 import LoginForm from './admin/LoginForm';
+import FirebaseNotConfigured from './admin/FirebaseNotConfigured';
 import { auth, isConfigured } from '../firebase/firebase';
 import { onAuthStateChanged, signOut, User } from 'firebase/auth';
 
@@ -20,12 +21,15 @@ const AdminView: React.FC<AdminViewProps> = (props) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
+  // If Firebase is not configured, show a helpful message and stop.
+  // This makes the issue clear to the developer.
+  if (!isConfigured) {
+    return <FirebaseNotConfigured />;
+  }
+
   useEffect(() => {
-    if (!auth) {
-      setLoading(false);
-      return;
-    }
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+    // auth is guaranteed to be defined here because we've passed the isConfigured check
+    const unsubscribe = onAuthStateChanged(auth!, (currentUser) => {
       setUser(currentUser);
       setLoading(false);
     });
@@ -43,15 +47,6 @@ const AdminView: React.FC<AdminViewProps> = (props) => {
     }
   };
   
-  // This is a fallback for when Firebase isn't configured,
-  // to keep the admin panel accessible with mock data for review purposes.
-  if (!isConfigured) {
-      const handleMockLogout = () => {
-        alert('Logout functionality is disabled because Firebase is not configured. Please check your firebase/config.ts file.');
-      };
-      return <AdminDashboard {...props} onLogout={handleMockLogout} />;
-  }
-
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-[calc(100vh-12rem)]">

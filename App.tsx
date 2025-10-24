@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useMockData } from './hooks/useMockData';
 import { useFirebaseData } from './hooks/useFirebaseData';
-import { isConfigured } from './firebase/firebase';
 import PublicView from './pages/PublicView';
 import AdminView from './pages/AdminView';
 import AboutView from './pages/AboutView';
@@ -13,7 +11,7 @@ export type View = 'public' | 'admin' | 'about' | 'contact';
 const App: React.FC = () => {
   const [view, setView] = useState<View>('public');
   const [theme, setTheme] = useState<'light' | 'dark'>(localStorage.getItem('theme') as 'light' | 'dark' || 'light');
-  const data = isConfigured ? useFirebaseData() : useMockData();
+  const data = useFirebaseData();
 
   useEffect(() => {
     const root = window.document.documentElement;
