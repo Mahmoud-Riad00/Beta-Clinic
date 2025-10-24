@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Clinic, Doctor } from '../../types';
+import { Clinic, Doctor } from '../types';
 import AdminDashboard from './admin/AdminDashboard';
 import LoginForm from './admin/LoginForm';
-import { auth, isConfigured } from '../../firebase/firebase';
+import { auth, isConfigured } from '../firebase/firebase';
 import { onAuthStateChanged, signOut, User } from 'firebase/auth';
 
 interface AdminViewProps {

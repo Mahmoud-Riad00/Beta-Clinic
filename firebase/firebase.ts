@@ -7,8 +7,8 @@ let app: FirebaseApp | undefined;
 let db: Firestore | undefined;
 let auth: Auth | undefined;
 
-// A simple check to see if the config is still the placeholder
-const isConfigured = firebaseConfig.apiKey !== "YOUR_API_KEY" && firebaseConfig.projectId !== "YOUR_PROJECT_ID";
+// A check to see if the necessary Firebase config environment variables are set.
+const isConfigured = firebaseConfig.apiKey && firebaseConfig.projectId;
 
 if (isConfigured) {
   try {
@@ -20,7 +20,7 @@ if (isConfigured) {
     // You could set isConfigured to false here if initialization fails
   }
 } else {
-    console.warn("Firebase is not configured. Please check your firebase/config.ts file.");
+    console.warn("Firebase is not configured. Please add your Firebase environment variables to a .env file (for local development) or to your hosting provider's settings (for deployment).");
 }
 
 export { db, auth, isConfigured };
